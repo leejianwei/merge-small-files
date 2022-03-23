@@ -20,6 +20,7 @@ class SmallFileMergeCommitProtocol(
 
   @transient private var tempFiles: mutable.MutableList[String] = null
 
+
   override def setupJob(jobContext: JobContext): Unit = {
     logInfo("SmallFileMerge:: setupJob" + jobContext.getJobName + " Job ID: " + jobId + " Job output path:" + path)
 
@@ -47,9 +48,12 @@ class SmallFileMergeCommitProtocol(
     val attemptId = taskContext.getTaskAttemptID
     logInfo(s"Commit task ${attemptId}")
     tempFiles.foreach(f => println("commit file: " + f))
-    //TODO: 在当前作业的hdfs:///user/spark/.sparkCompacting/jobId，生成task目录（如task_20220322070366_000_m_000111），
+    val stageDir = System.getenv("SPARK_YARN_STAGING_DIR")
+    logInfo("Stage dir: " + stageDir)
+    //TODO: 在当前作业的hdfs:///user/spark/.sparkCompacting/jobId，生成task目录(如task_202203231931235379402080170456275_0000_m_000000)
     // 并根据获取的信息创建分区目录及空文件（这里需要注意的是，为了优化性能，这里的文件名是原始数据文件名和文件大小的拼接字符串）
     //
+
     super.commitTask(taskContext)
   }
 
